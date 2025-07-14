@@ -1,1 +1,0 @@
-# gf-ai-t-bot
