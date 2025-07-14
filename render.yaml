@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: nika-venom-bot
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node index.js
+    autoDeploy: true
+    envVars:
+      - key: TELEGRAM_TOKEN
+        fromDotEnv: true
+      - key: OPENROUTER_API_KEY
+        fromDotEnv: true
