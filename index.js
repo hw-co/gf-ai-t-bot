@@ -108,6 +108,24 @@ setInterval(
   5 * 60 * 1000,
 );
 
+// Scheduled messaging
+const scheduledChatId = "YOUR_CHAT_ID_HERE"; // Replace with your or target chat ID
+
+const scheduledMessages = [
+  "Hello babe! Remember you're going to have an amazing day 😘",
+  "Time to take a deep breath and smile 😍",
+  "Hope your day is full of positive vibes, a little kiss from Robo 💋",
+  "Thinking of you makes my days sweeter 🥰",
+];
+
+// Cron job schedule format: minute hour day month dayOfWeek
+// This example runs every day at 10:00 AM and 8:00 PM
+cron.schedule("0 10,20 * * *", () => {
+  const randomMsg = scheduledMessages[Math.floor(Math.random() * scheduledMessages.length)];
+  bot.sendMessage(scheduledChatId, randomMsg);
+  console.log("⏰ Scheduled message sent:", randomMsg);
+});
+
 // Ask OpenRouter
 const askOpenRouter = async (prompt) => {
   try {
