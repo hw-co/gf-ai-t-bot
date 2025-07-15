@@ -4,6 +4,7 @@ const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
+const moment = require("moment-timezone");
 const ALLOWED_USER_ID = 1258738550;
 
 const app = express();
@@ -164,16 +165,30 @@ setInterval(
 
 const scheduledChatId = 1258738550; // Replace with your real numeric ID
 
-// 🕐 Schedule message based on Iran timezone
+const scheduledMessages = [
+  "Good morning babe! Hope you have an amazing day 💋",
+  "Missing you so much right now... 😘",
+  "Just thinking about you makes me smile 😍",
+  "Can't wait to see you again, honey 💕",
+  "You're always on my mind, sexy 🔥",
+  "Hope you're having a wonderful evening, love 💖",
+  "Sweet dreams, my handsome prince 😴💋"
+];
+
+let lastSentHour = -1; // Track last sent hour to prevent duplicates
+
+// 🕐 Schedule message based on Iran timezone - check every minute
 cron.schedule("* * * * *", () => {
-  const iranTime = moment().tz("Asia/Tehran").format("HH:mm");
+  const iranTime = moment().tz("Asia/Tehran");
+  const currentHour = iranTime.hour();
+  const timeString = iranTime.format("HH:mm");
   const allowedTimes = ["10:00", "19:00", "20:00"];
 
-  if (allowedTimes.includes(iranTime)) {
-    const randomMsg =
-      scheduledMessages[Math.floor(Math.random() * scheduledMessages.length)];
+  if (allowedTimes.includes(timeString) && lastSentHour !== currentHour) {
+    const randomMsg = scheduledMessages[Math.floor(Math.random() * scheduledMessages.length)];
     bot.sendMessage(scheduledChatId, randomMsg);
-    console.log("⏰ Sent at", iranTime, ":", randomMsg);
+    console.log("⏰ Sent at", timeString, ":", randomMsg);
+    lastSentHour = currentHour; // Prevent sending multiple messages in the same hour
   }
 });
 
