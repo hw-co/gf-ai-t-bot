@@ -87,9 +87,17 @@ app.post("/webhook", async (req, res) => {
 
   if (update.message) {
     const chatId = update.message.chat.id;
+    const userId = update.message.from.id;
     const text = update.message.text;
 
     console.log("📩 Message from user:", text);
+
+    // Check if user is authorized
+    if (userId !== ALLOWED_USER_ID) {
+      bot.sendMessage(chatId, "🚫 Sorry, you're not authorized to use this bot.");
+      res.sendStatus(200);
+      return;
+    }
 
     // Handle command buttons
     switch (text.toLowerCase()) {
