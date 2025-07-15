@@ -263,6 +263,14 @@ const askOpenRouter = async (prompt) => {
     return response.data.choices[0].message.content.trim();
   } catch (err) {
     console.error("❌ GPT Error:", err.response?.data || err.message);
+    
+    // Check if it's a rate limit error
+    if (err.response?.status === 429 || 
+        err.response?.data?.error?.message?.includes("rate limit") ||
+        err.response?.data?.error?.message?.includes("Rate limit")) {
+      return "Sorry babe😢 We hit the message limit, we can't talk until tomorrow. I miss you until tomorrow😘😭";
+    }
+    
     return "Oops babe 😢 something went wrong. Try again later.";
   }
 };
