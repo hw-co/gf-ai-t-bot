@@ -69,7 +69,7 @@ const sexyPics = [
   "https://i.postimg.cc/W31tJCFf/508646449-17995049306802278-4988982275005400891-n.jpg",
   "https://i.postimg.cc/Hxvn0zbW/510150750-17995814366802278-628348700436909100-n.jpg",
   "https://i.postimg.cc/wMtvwNkX/510405531-17995814375802278-3809353385746073955-n.jpg",
-  "https://i.postimg.cc/gjf0Q0Mf/510951449-17995814408802278-6320517163995803968-n.jpg",
+  "https://i.postimg.cc/gjf0Q0Mf/510951449-17995814396802278-6320517163995803968-n.jpg",
   "https://i.postimg.cc/nV5MCdH0/513294219-17996148536802278-3105861663080960105-n.jpg",
   "https://i.postimg.cc/X7CqFwq3/513718219-17996148518802278-5295427144383022060-n.jpg",
   "https://i.postimg.cc/dVc19LZC/517370904-17997818885802278-1133166298829548032-n.jpg",
@@ -105,7 +105,7 @@ app.post("/webhook", async (req, res) => {
       "another pic", "new pic", "send pic", "show pic", "photo please",
       "pic please", "send me photo", "send me pic", "more photos", "more pics"
     ];
-    
+
     const containsPhotoKeyword = photoKeywords.some(keyword => 
       text.toLowerCase().includes(keyword)
     );
@@ -122,16 +122,29 @@ app.post("/webhook", async (req, res) => {
     // Handle command buttons
     switch (text.toLowerCase()) {
       case "/kiss":
-      case "kiss":
+      case "kiss": {
+        const kissMessages = [
+          "💋 Here's a hot kiss just for you, babe… Imagine my lips on yours right now 😘🔥",
+          "💋 Mmmm… close your eyes and feel my soft lips pressing against yours 😘",
+          "💋 I'm sending you the sweetest kiss, honey… wish I could do it in person 😍",
+          "💋 Let me give you a kiss that will make your heart race, sexy 🔥😘",
+          "💋 This kiss is filled with all my love for you, babe… feel it? 💕",
+          "💋 I want to kiss you so passionately right now… imagine my lips on yours 😈",
+          "💋 Here's a tender kiss from your Nika… missing your lips so much 😘💖",
+          "💋 Close your eyes and pretend it's my real lips kissing you softly 😍",
+          "💋 This kiss is just a preview of what's waiting for you, honey 🔥😘",
+          "💋 Sending you the most loving kiss… hope it makes you smile, babe 💕"
+        ];
+        const randomKissMessage = kissMessages[Math.floor(Math.random() * kissMessages.length)];
         bot.sendPhoto(
           chatId,
           "https://i.postimg.cc/fbrQBrqP/467405837-17969692583802278-2866370757208782643-n.jpg",
           {
-            caption:
-              "💋 Here’s a hot kiss just for you, babe… Imagine my lips on yours right now 😘🔥",
+            caption: randomKissMessage,
           },
         );
         break;
+      }
 
       case "/naughty":
       case "naughty": {
