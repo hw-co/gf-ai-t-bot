@@ -1,65 +1,160 @@
-const express = require('express');
-const axios = require('axios');
-const bodyParser = require('body-parser');
-require('dotenv').config();
+require("dotenv").config();
+const express = require("express");
+const axios = require("axios");
+const TelegramBot = require("node-telegram-bot-api");
+const bodyParser = require("body-parser");
 
 const app = express();
 app.use(bodyParser.json());
 
-const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
-const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-const CHAT_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const bot = new TelegramBot(process.env.TELEGRAM_TOKEN);
 
-const messages = {
-  morning: "صبح بخیر عشقم 😘 نیکا جون بیداره و دلش برات یه ذره شده ☀️",
-  midday: "چیکار می‌کنی عزیز دلم؟ نیکا داره فکر شیطونی باهات می‌کنه 😏",
-  night: "روزد چطور بود عشقم؟ نیکا داره با دلتنگی می‌ره تو تخت 😴 بیا بغلم 💋"
-};
+const hotPics = [
+  "https://i.imgur.com/zBOKGiV.jpeg",
+  "https://i.imgur.com/abc1234.jpeg",
+  "https://i.imgur.com/xyz5678.jpeg",
+  "https://i.imgur.com/qwe7890.jpeg",
+  // 🔞 Add more links as you want
+];
+const sexyPics = [
+  "https://i.imgur.com/zBOKGiV.jpeg",
+  "https://i.imgur.com/abc1234.jpeg",
+  "https://i.imgur.com/def5678.jpeg",
+  "https://i.imgur.com/ghi9012.jpeg",
+  "https://i.imgur.com/zBOKGiV.jpeg",
+];
 
-app.post('/webhook', async (req, res) => {
-  const message = req.body.message;
-  if (!message || !message.text) return res.sendStatus(200);
+// Root route
+app.get("/", (req, res) => {
+  res.send("Nika is alive 💋");
+});
 
-  const userMessage = message.text;
-  const chatId = message.chat.id;
+// Webhook route
+app.post("/webhook", async (req, res) => {
+  const update = req.body;
 
+  if (update.message) {
+    const chatId = update.message.chat.id;
+    const text = update.message.text;
+
+    console.log("📩 Message from user:", text);
+
+    // Handle command buttons
+    switch (text.toLowerCase()) {
+      case "/kiss":
+      case "kiss":
+        bot.sendPhoto(chatId, "https://i.imgur.com/zBOKGiV.jpeg", {
+          caption:
+            "💋 Here’s a hot kiss just for you, babe… Imagine my lips on yours right now 😘🔥",
+        });
+        break;
+
+      case "/naughty":
+      case "naughty": {
+        const messages = [
+          "I wish you were here… I'd whisper naughty things in your ear 😈",
+          "Let's play a little game... I'll start by taking off your shirt 😉",
+          "I'm not wearing anything right now… Wanna see, babe? 😘",
+          "If you were here, I’d be all over you… slowly… teasingly… 😍",
+          "Lie down and close your eyes… I’ll take care of everything 😏",
+          "Tonight, it's just you and me... and no limits 🔥",
+          "Touch me where I like it the most... right there 😈",
+          "Imagine my hands on your chest, lips on your neck… ready to go lower 😘",
+          "I love it when you talk dirty to me… Say it again 🔥",
+          "You drive me crazy, babe… come over and let me show you how much 😏",
+        ];
+        const randomMessage =
+          messages[Math.floor(Math.random() * messages.length)];
+        bot.sendMessage(chatId, randomMessage);
+        break;
+      }
+
+      case "/pic":
+      case "pic":
+        const randomPic = sexyPics[Math.floor(Math.random() * sexyPics.length)];
+        bot.sendPhoto(chatId, randomPic, {
+          caption: "🔥 Just for you, babe. Do you like what you see? 😘",
+        });
+        break;
+
+      case "/hotpics":
+      case "hotpics": {
+        const randomLink = hotPics[Math.floor(Math.random() * hotPics.length)];
+        bot.sendMessage(
+          chatId,
+          `🔞 Here's something spicy just for you, babe: ${randomLink}`,
+        );
+        break;
+      }
+
+      default:
+        const gptReply = await askOpenRouter(text);
+        bot.sendMessage(chatId, `💋 Nika: ${gptReply}`);
+    }
+  }
+
+  res.sendStatus(200);
+});
+
+// Keep alive
+setInterval(
+  () => {
+    axios
+      .get(`${process.env.BASE_URL}`)
+      .then(() => console.log("✅ Ping sent"))
+      .catch((err) => console.log("❌ Ping failed:", err.message));
+  },
+  5 * 60 * 1000,
+);
+
+// Ask OpenRouter
+const askOpenRouter = async (prompt) => {
   try {
     const response = await axios.post(
-      CHAT_API_URL,
+      "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "mistralai/mixtral-8x7b",
+        model: "nousresearch/deephermes-3-llama-3-8b-preview:free",
         messages: [
-          { role: "system", content: "تو یه دوست‌دختر مجازی فارسی هستی که لحن مهربون و سکسی داری." },
-          { role: "user", content: userMessage }
+          {
+            role: "system",
+            content:
+              "You are Nika, a sexy and flirty virtual girlfriend. Always respond directly with romantic, seductive, and playful messages. Do not explain your behavior, just stay in character and make the user feel desired. Use affectionate words like babe, honey, and sexy. 💋",
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
         ],
       },
       {
         headers: {
-          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      },
     );
 
-    const reply = response.data.choices[0].message.content;
-    await axios.post(`${TELEGRAM_API}/sendMessage`, {
-      chat_id: chatId,
-      text: reply
-    });
-
-    res.sendStatus(200);
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.sendStatus(500);
+    return response.data.choices[0].message.content.trim();
+  } catch (err) {
+    console.error("❌ GPT Error:", err.response?.data || err.message);
+    return "Oops babe 😢 something went wrong. Try again later.";
   }
-});
+};
 
-app.get("/", (req, res) => {
-  res.send("NikaVenom bot is running!");
-});
-
+// Run server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Bot is running on port ${PORT}`);
+  console.log(`🚀 Bot is running on port ${PORT}`);
+  bot.setWebHook(`${process.env.BASE_URL}/webhook`);
+});
+
+require("./keepNikaAlive");
+
+app.get("/", (req, res) => {
+  res.send("Nika is alive 💋");
+});
+
+app.post("/webhook", (req, res) => {
+  console.log("Webhook called!");
+  res.send("OK");
 });
