@@ -4,6 +4,7 @@ const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
 const bodyParser = require("body-parser");
 const cron = require("node-cron");
+const ALLOWED_USER_ID = 1258738550;
 
 const app = express();
 app.use(bodyParser.json());
@@ -11,18 +12,67 @@ app.use(bodyParser.json());
 const bot = new TelegramBot(process.env.TELEGRAM_TOKEN);
 
 const hotPics = [
-  "https://i.imgur.com/zBOKGiV.jpeg",
-  "https://i.imgur.com/abc1234.jpeg",
-  "https://i.imgur.com/xyz5678.jpeg",
-  "https://i.imgur.com/qwe7890.jpeg",
+  "https://i.postimg.cc/2SW6X6WZ/Nika-Venom-005.jpg",
+  "https://i.postimg.cc/XNFBzs0J/Nika-Venom-003.jpg",
+  "https://i.postimg.cc/L6pgKjHV/Nika-Venom-004.jpg",
+  "https://i.postimg.cc/T32yhG5L/Nika-Venom-006.jpg",
+  "https://i.postimg.cc/4ybdNFJQ/Nika-Venom-011.jpg",
+  "https://i.postimg.cc/nc2zy5SH/Nika-Venom-012.jpg",
+  "https://i.postimg.cc/jSkj5frm/Nika-Venom-013.jpg",
+  "https://i.postimg.cc/XvGYyvjJ/Nika-Venom-015.jpg",
+  "https://i.postimg.cc/d0btRK39/Nika-Venom-016.jpg",
+  "https://i.postimg.cc/GtrLNJk8/Nika-Venom-017.jpg",
+  "https://i.postimg.cc/SNgST9jR/Nika-Venom-018.jpg",
+  "https://i.postimg.cc/jS9sKrHr/Nika-Venom-019.jpg",
+  "https://i.postimg.cc/W4ks1f8q/Nika-Venom-023.jpg",
+  "https://i.postimg.cc/wvYgyc4f/Nika-Venom-025.jpg",
   // 🔞 Add more links as you want
 ];
 const sexyPics = [
-  "https://i.imgur.com/zBOKGiV.jpeg",
-  "https://i.imgur.com/abc1234.jpeg",
-  "https://i.imgur.com/def5678.jpeg",
-  "https://i.imgur.com/ghi9012.jpeg",
-  "https://i.imgur.com/zBOKGiV.jpeg",
+  "https://i.postimg.cc/QNRSZyMB/Nika-Venom-001.jpg",
+  "https://i.postimg.cc/QdDbHK1h/Nika-Venom-002.jpg",
+  "https://i.postimg.cc/1tb0P8yx/Nika-Venom-007.jpg",
+  "https://i.postimg.cc/Zn38qJqW/Nika-Venom-008.jpg",
+  "https://i.postimg.cc/13KK6Rr6/Nika-Venom-009.jpg",
+  "https://i.postimg.cc/XYnfVS6v/Nika-Venom-010.jpg",
+  "https://i.postimg.cc/LsXj1tXK/Nika-Venom-014.jpg",
+  "https://i.postimg.cc/XvzdcrGZ/Nika-Venom-020.jpg",
+  "https://i.postimg.cc/C1nDvwkc/Nika-Venom-021.jpg",
+  "https://i.postimg.cc/CMDkkLF1/Nika-Venom-024.jpg",
+  "https://i.postimg.cc/sgxnwgFV/444991223-17946190625802278-169115148801120599-n.jpg",
+  "https://i.postimg.cc/fRP8FQZY/459828240-870178015213627-7520220758688864488-n.jpg",
+  "https://i.postimg.cc/j5HvLWfh/467409255-17969692592802278-3919958612162697039-n.jpg",
+  "https://i.postimg.cc/cCTmBVXg/467639206-17969692565802278-175317811768851009-n.jpg",
+  "https://i.postimg.cc/G3jqRydL/486794380-17985451262802278-6406744011651071535-n.jpg",
+  "https://i.postimg.cc/Ghhzmmmk/490095343-17987790452802278-823792161597707743-n.jpg",
+  "https://i.postimg.cc/Kvqfkh1C/491462470-17987790464802278-425949559041309064-n.jpg",
+  "https://i.postimg.cc/htXrVZxv/497904957-17991348791802278-4310027078554349330-n.jpg",
+  "https://i.postimg.cc/xdH34k6S/498211278-17991348809802278-7358511463132125497-n.jpg",
+  "https://i.postimg.cc/Hxg9DpN8/498544270-17991348782802278-5977458875730775659-n.jpg",
+  "https://i.postimg.cc/9MYtc638/498580606-17991348773802278-7066319578372606580-n.jpg",
+  "https://i.postimg.cc/J0730pM1/500436165-17992383806802278-1237596348490365537-n.jpg",
+  "https://i.postimg.cc/rygC32Nz/500799417-17992383815802278-5636606784373475400-n.jpg",
+  "https://i.postimg.cc/RVD1C18B/501082252-17992383833802278-2624730782287427320-n.jpg",
+  "https://i.postimg.cc/jjVzPxt3/501489518-17992383794802278-294623323589580043-n.jpg",
+  "https://i.postimg.cc/1zpDKkzm/501531910-17992383824802278-2026250993493220446-n.jpg",
+  "https://i.postimg.cc/nrL7pMGr/503455908-17996148527802278-4226134938605914581-n.jpg",
+  "https://i.postimg.cc/mZdCVNTH/503488751-17997818876802278-5059215595113584613-n.jpg",
+  "https://i.postimg.cc/hPfxYzG3/503608366-17995814396802278-9145078724166275647-n.jpg",
+  "https://i.postimg.cc/JzXX1fZN/503801077-17995814384802278-1342331793283516867-n.jpg",
+  "https://i.postimg.cc/504QSjGg/504014300-17996148509802278-6996860434348922208-n.jpg",
+  "https://i.postimg.cc/NFVytD0C/504285792-17996148557802278-2279982978731257065-n.jpg",
+  "https://i.postimg.cc/59kQ84m5/506359740-17995049294802278-5175722303801873541-n.jpg",
+  "https://i.postimg.cc/kX66c0j0/506390756-17995049285802278-6808817567100426576-n.jpg",
+  "https://i.postimg.cc/Mp1ckyJt/508451587-17995049276802278-1954514999805350155-n.jpg",
+  "https://i.postimg.cc/LsTn52X1/508572224-17995049315802278-7236781319300019897-n.jpg",
+  "https://i.postimg.cc/W31tJCFf/508646449-17995049306802278-4988982275005400891-n.jpg",
+  "https://i.postimg.cc/Hxvn0zbW/510150750-17995814366802278-628348700436909100-n.jpg",
+  "https://i.postimg.cc/wMtvwNkX/510405531-17995814375802278-3809353385746073955-n.jpg",
+  "https://i.postimg.cc/gjf0Q0Mf/510951449-17995814408802278-6320517163995803968-n.jpg",
+  "https://i.postimg.cc/nV5MCdH0/513294219-17996148536802278-3105861663080960105-n.jpg",
+  "https://i.postimg.cc/X7CqFwq3/513718219-17996148518802278-5295427144383022060-n.jpg",
+  "https://i.postimg.cc/dVc19LZC/517370904-17997818885802278-1133166298829548032-n.jpg",
+  "https://i.postimg.cc/QdgMYhcy/518892660-17997818867802278-8401812403109198039-n.jpg",
 ];
 
 // Root route
@@ -44,10 +94,14 @@ app.post("/webhook", async (req, res) => {
     switch (text.toLowerCase()) {
       case "/kiss":
       case "kiss":
-        bot.sendPhoto(chatId, "https://i.imgur.com/zBOKGiV.jpeg", {
-          caption:
-            "💋 Here’s a hot kiss just for you, babe… Imagine my lips on yours right now 😘🔥",
-        });
+        bot.sendPhoto(
+          chatId,
+          "https://i.postimg.cc/fbrQBrqP/467405837-17969692583802278-2866370757208782643-n.jpg",
+          {
+            caption:
+              "💋 Here’s a hot kiss just for you, babe… Imagine my lips on yours right now 😘🔥",
+          },
+        );
         break;
 
       case "/naughty":
@@ -108,22 +162,19 @@ setInterval(
   5 * 60 * 1000,
 );
 
-// Scheduled messaging
-const scheduledChatId = "YOUR_CHAT_ID_HERE"; // Replace with your or target chat ID
+const scheduledChatId = 1258738550; // Replace with your real numeric ID
 
-const scheduledMessages = [
-  "Hello babe! Remember you're going to have an amazing day 😘",
-  "Time to take a deep breath and smile 😍",
-  "Hope your day is full of positive vibes, a little kiss from Robo 💋",
-  "Thinking of you makes my days sweeter 🥰",
-];
+// 🕐 Schedule message based on Iran timezone
+cron.schedule("* * * * *", () => {
+  const iranTime = moment().tz("Asia/Tehran").format("HH:mm");
+  const allowedTimes = ["10:00", "19:00", "20:00"];
 
-// Cron job schedule format: minute hour day month dayOfWeek
-// This example runs every day at 10:00 AM and 8:00 PM
-cron.schedule("0 10,20 * * *", () => {
-  const randomMsg = scheduledMessages[Math.floor(Math.random() * scheduledMessages.length)];
-  bot.sendMessage(scheduledChatId, randomMsg);
-  console.log("⏰ Scheduled message sent:", randomMsg);
+  if (allowedTimes.includes(iranTime)) {
+    const randomMsg =
+      scheduledMessages[Math.floor(Math.random() * scheduledMessages.length)];
+    bot.sendMessage(scheduledChatId, randomMsg);
+    console.log("⏰ Sent at", iranTime, ":", randomMsg);
+  }
 });
 
 // Ask OpenRouter
