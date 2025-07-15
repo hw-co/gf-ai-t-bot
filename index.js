@@ -99,6 +99,26 @@ app.post("/webhook", async (req, res) => {
       return;
     }
 
+    // Check for photo-related phrases
+    const photoKeywords = [
+      "new photo", "send photo", "send another photo", "show me photo", 
+      "another pic", "new pic", "send pic", "show pic", "photo please",
+      "pic please", "send me photo", "send me pic", "more photos", "more pics"
+    ];
+    
+    const containsPhotoKeyword = photoKeywords.some(keyword => 
+      text.toLowerCase().includes(keyword)
+    );
+
+    if (containsPhotoKeyword) {
+      const randomPic = sexyPics[Math.floor(Math.random() * sexyPics.length)];
+      bot.sendPhoto(chatId, randomPic, {
+        caption: "🔥 Just for you, babe. Do you like what you see? 😘",
+      });
+      res.sendStatus(200);
+      return;
+    }
+
     // Handle command buttons
     switch (text.toLowerCase()) {
       case "/kiss":
